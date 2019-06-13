@@ -6,7 +6,6 @@ import Tablero.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -39,6 +38,8 @@ public class StartGaming {
     public static int ZombiesSalidos;
     private static int ZombiesPorSalir;
     private static boolean ZombiesTablero;
+    private static boolean nuezColocado;
+    private static boolean petaColocado;
 
     /**
      * El cuerpo principal del juego.
@@ -78,6 +79,12 @@ public class StartGaming {
                         break;
                     case "ayuda": //Se llama a la función ayuda.
                         Ayuda();
+                        break;
+                    case "nu":
+                        PlantarNuez();
+                        break;
+                    case "p":
+                        PlantarPetacereza();
                         break;
                     case "victoriaz": //Comando de consola para el testeo.
                         victoriaZombies = true;
@@ -292,20 +299,59 @@ public class StartGaming {
             if (ZombiesSalidos >= nzombies) { //Si los ZombiesSalidos son mayores o iguales al nzombies totales, se sale del bucle.
                 return;
             } else {
-                if (turno >= TurnoSpawn[i]) { //Si el turno de juego es mayor o igual al TurnoSpawn
-                    int filaZombie = getRandomNumberInRange(0, filas - 1); //Guardamos en una variable un número aleatorio según el rango.
-                    if (!tablero[filaZombie][columnas - 1].isOcupado()) { //Si no está ocupada la casilla final del tablero, con la coordenada generada anteriormente.
-                        Zombie z = new Zombie_Comun(); //Generamos un zombie.
+                int zombieElegido = getRandomNumberInRange(0, 2);
+                switch (zombieElegido + 1) {
+                    case 1:
+                        if (turno >= TurnoSpawn[i]) { //Si el turno de juego es mayor o igual al TurnoSpawn
+                            int filaZombie = getRandomNumberInRange(0, filas - 1); //Guardamos en una variable un número aleatorio según el rango.
+                            if (!tablero[filaZombie][columnas - 1].isOcupado()) { //Si no está ocupada la casilla final del tablero, con la coordenada generada anteriormente.
+                                Zombie z = new Zombie_Comun(); //Generamos un zombie.
 
-                        z.setPosFila(columnas - 1); //Fila del Zombie.
-                        z.setPosColumna(filaZombie); //Columna del Zombie.
+                                z.setPosFila(columnas - 1); //Fila del Zombie.
+                                z.setPosColumna(filaZombie); //Columna del Zombie.
 
-                        Casilla c = new Casilla(z); //Nueva Casilla que contiene Zombie.
-                        tablero[filaZombie][columnas - 1] = c; //Asignamos al tablero la casilla creada.
-                        ZombiesSalidos += 1; //Aumentamos en 1 los zombies que han salido.
-                    } else {
-                        TurnoSpawn[i] += 1; //El turno de spawn aumenta en 1.
-                    }
+                                Casilla c = new Casilla(z); //Nueva Casilla que contiene Zombie.
+                                tablero[filaZombie][columnas - 1] = c; //Asignamos al tablero la casilla creada.
+                                ZombiesSalidos += 1; //Aumentamos en 1 los zombies que han salido.
+                            } else {
+                                TurnoSpawn[i] += 1; //El turno de spawn aumenta en 1.
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (turno >= TurnoSpawn[i]) { //Si el turno de juego es mayor o igual al TurnoSpawn
+                            int filaZombie = getRandomNumberInRange(0, filas - 1); //Guardamos en una variable un número aleatorio según el rango.
+                            if (!tablero[filaZombie][columnas - 1].isOcupado()) { //Si no está ocupada la casilla final del tablero, con la coordenada generada anteriormente.
+                                Zombie z = new Zombie_Caracubo(); //Generamos un zombie.
+
+                                z.setPosFila(columnas - 1); //Fila del Zombie.
+                                z.setPosColumna(filaZombie); //Columna del Zombie.
+
+                                Casilla c = new Casilla(z); //Nueva Casilla que contiene Zombie.
+                                tablero[filaZombie][columnas - 1] = c; //Asignamos al tablero la casilla creada.
+                                ZombiesSalidos += 1; //Aumentamos en 1 los zombies que han salido.
+                            } else {
+                                TurnoSpawn[i] += 1; //El turno de spawn aumenta en 1.
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (turno >= TurnoSpawn[i]) { //Si el turno de juego es mayor o igual al TurnoSpawn
+                            int filaZombie = getRandomNumberInRange(0, filas - 1); //Guardamos en una variable un número aleatorio según el rango.
+                            if (!tablero[filaZombie][columnas - 1].isOcupado()) { //Si no está ocupada la casilla final del tablero, con la coordenada generada anteriormente.
+                                Zombie z = new Zombie_Deportista(); //Generamos un zombie.
+
+                                z.setPosFila(columnas - 1); //Fila del Zombie.
+                                z.setPosColumna(filaZombie); //Columna del Zombie.
+
+                                Casilla c = new Casilla(z); //Nueva Casilla que contiene Zombie.
+                                tablero[filaZombie][columnas - 1] = c; //Asignamos al tablero la casilla creada.
+                                ZombiesSalidos += 1; //Aumentamos en 1 los zombies que han salido.
+                            } else {
+                                TurnoSpawn[i] += 1; //El turno de spawn aumenta en 1.
+                            }
+                        }
+                        break;
                 }
                 break;
             }
@@ -415,6 +461,98 @@ public class StartGaming {
     }
 
     /**
+     * Utilizamos esta función para colocar un nuez en el tablero.
+     *
+     * @throws ExcepcionJuego
+     */
+    private static void PlantarNuez() throws ExcepcionJuego {
+        if (StartGame) { //Comprobamos si el juego está iniciado.
+            if (comands.length == 3) { //Comprobamos la longitud del comando.
+
+                try {
+                    int fila = Integer.parseInt(comands[1]); //Fila introducida por el usuario.
+                    int columna = Integer.parseInt(comands[2]); //Columna introducida por el usuario.
+                    if (tablero[fila - 1][columna - 1].isOcupado()) { //Si la casilla está ocupada, lanzamos la ExcepcionPlanta.                        
+                        throw new ExcepcionPlanta("La casilla se encuentra ocupada");
+                    } else if (nuezColocado) { //Si ya hemos colocado este turno, lanzamos la ExcepcionPlanta.                        
+                        throw new ExcepcionPlanta("Ya has colocado una nuez este turno");
+                    } else if (soles < 50) { //Si el coste excede los soles totales, lanzamos la EcepcionJuego.                        
+                        throw new ExcepcionJuego("No tienes suficientes soles");
+                    } else if (columna == columnas) { //Si se intenta colocar una planta en la última columna, lanzamos la ExcepcionJuego.
+                        throw new ExcepcionJuego("No puedes plantar en la ultima casilla");
+                    } else { //Si no, colocamos un lanzaguisantes en las coordenadas introducidas por el usuario.                        
+                        nuezColocado = true;
+                        Nuez n = new Nuez();
+                        n.setPosFila(fila);
+                        n.setPosColumna(columna);
+                        Casilla c = new Casilla(n);
+                        tablero[fila - 1][columna - 1] = c;
+                        soles -= 50; //Restamos su coste correspondiente a los soles totales.
+                        Renderizar(tablero); //Actualizamos el tablero.
+                    }
+                } catch (NumberFormatException ex) {
+                    System.out.println(ex.toString());
+                    System.out.println("Caracteres Invalidos");
+                } catch (ExcepcionPlanta ex) {
+                    System.out.println(ex.toString());
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    System.out.println("SystemMessage > Las coordenadas han de estar dentro de los limites de tablero");
+                }
+            } else { //Si no coincide la longitud del comando.
+                throw new ExcepcionJuego("Comando invalidos"); //Lanzamos la ExcepcionJuego.
+            }
+        } else { //Si no hay partida iniciada.
+            throw new ExcepcionJuego("Inicia Partida Primero"); //Lanzamos la ExcepcionJuego.
+        }
+    }
+
+    /**
+     * Utilizamos esta función para colocar un petacereza en el tablero.
+     *
+     * @throws ExcepcionJuego
+     */
+    private static void PlantarPetacereza() throws ExcepcionJuego {
+        if (StartGame) { //Comprobamos si el juego está iniciado.
+            if (comands.length == 3) { //Comprobamos la longitud del comando.
+
+                try {
+                    int fila = Integer.parseInt(comands[1]); //Fila introducida por el usuario.
+                    int columna = Integer.parseInt(comands[2]); //Columna introducida por el usuario.
+                    if (tablero[fila - 1][columna - 1].isOcupado()) { //Si la casilla está ocupada, lanzamos la ExcepcionPlanta.                        
+                        throw new ExcepcionPlanta("La casilla se encuentra ocupada");
+                    } else if (petaColocado) { //Si ya hemos colocado este turno, lanzamos la ExcepcionPlanta.                        
+                        throw new ExcepcionPlanta("Ya has colocado una petacereza este turno");
+                    } else if (soles < 50) { //Si el coste excede los soles totales, lanzamos la EcepcionJuego.                        
+                        throw new ExcepcionJuego("No tienes suficientes soles");
+                    } else if (columna == columnas) { //Si se intenta colocar una planta en la última columna, lanzamos la ExcepcionJuego.
+                        throw new ExcepcionJuego("No puedes plantar en la ultima casilla");
+                    } else { //Si no, colocamos un lanzaguisantes en las coordenadas introducidas por el usuario.                        
+                        nuezColocado = true;
+                        PetaCereza p = new PetaCereza();
+                        p.setPosFila(fila-1);
+                        p.setPosColumna(columna-1);
+                        Casilla c = new Casilla(p);
+                        tablero[fila - 1][columna - 1] = c;
+                        soles -= 50; //Restamos su coste correspondiente a los soles totales.
+                        Renderizar(tablero); //Actualizamos el tablero.
+                    }
+                } catch (NumberFormatException ex) {
+                    System.out.println(ex.toString());
+                    System.out.println("Caracteres Invalidos");
+                } catch (ExcepcionPlanta ex) {
+                    System.out.println(ex.toString());
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    System.out.println("SystemMessage > Las coordenadas han de estar dentro de los limites de tablero");
+                }
+            } else { //Si no coincide la longitud del comando.
+                throw new ExcepcionJuego("Comando invalidos"); //Lanzamos la ExcepcionJuego.
+            }
+        } else { //Si no hay partida iniciada.
+            throw new ExcepcionJuego("Inicia Partida Primero"); //Lanzamos la ExcepcionJuego.
+        }
+    }
+
+    /**
      * Utilizamos esta función para colocar un girasol en el tablero.
      *
      * @throws ExcepcionJuego
@@ -458,13 +596,16 @@ public class StartGaming {
 
     /**
      * Comprueba la situaciñon de la partida cada vez que se pasa el turno.
-     * @throws ExcepcionJuego 
+     *
+     * @throws ExcepcionJuego
      */
     private static void PasarTurno() throws ExcepcionJuego {
         if (StartGame) { //Si hay una partida iniciada.
             CheckWin(); //Comprueba si ha ganado alguien.
             girasolColocado = false; //Se cambia colocar girasol a false.
             lanzaColocado = false; //Se cambia colocar lanzaguisantes a false.
+            nuezColocado = false;
+            petaColocado = false;
             turno++; //Aumenta en 1 el turno.
             SpawnZombie(); //Spawn de zombies.
             ActualizarTablero(); //Actualiza la situación del tablero.
@@ -476,7 +617,8 @@ public class StartGaming {
 
     /**
      * Comprueba si ha ganado alguien.
-     * @throws ExcepcionJuego 
+     *
+     * @throws ExcepcionJuego
      */
     private static void CheckWin() throws ExcepcionJuego {
         if (StartGame) { //Si hay una partida iniciada.
@@ -504,6 +646,7 @@ public class StartGaming {
 
     /**
      * Inicializa varibales
+     *
      * @throws ExcepcionJuego
      */
     private static void IniciarVariables() throws ExcepcionJuego {
@@ -523,6 +666,7 @@ public class StartGaming {
 
     /**
      * Inicializamos la dificultad de la partida.
+     *
      * @throws ExcepcionJuego
      */
     private static void IniciarDificultad() throws ExcepcionJuego {
@@ -546,6 +690,7 @@ public class StartGaming {
 
     /**
      * Actualiza la situación del tablero.
+     *
      * @throws ExcepcionJuego
      */
     private static void ActualizarTablero() throws ExcepcionJuego {
@@ -553,9 +698,13 @@ public class StartGaming {
         Entidad e;
         int GirasolesEnPartida = 0;
         int LanzaEnPartida = 0;
+        int NuezEnPartida = 0;
+        int PetaEnPartida = 0;
         ZombiesEnPartida = 0;
         int GirasolesCheked = 0;
         int LanzaCheked = 0;
+        int NuezCheked = 0;
+        int PetaCheked = 0;
         int ZombiesCheked = 0;
         //Conteo
         for (int i = 0; i < filas; i++) {
@@ -570,13 +719,19 @@ public class StartGaming {
                     GirasolesEnPartida++;
                 } else if (e instanceof Lanzaguisantes) {
                     LanzaEnPartida++;
+                } else if (e instanceof Nuez) {
+                    NuezEnPartida++;
+                } else if (e instanceof PetaCereza) {
+                    PetaEnPartida++;
                 } else if (e instanceof Zombie) {
                     ZombiesEnPartida++;
                 }
 
             }
         }
-        //Accion
+//Accion
+
+        //Girasol
         do {
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {
@@ -588,6 +743,7 @@ public class StartGaming {
                 }
             }
         } while (GirasolesCheked < GirasolesEnPartida);
+        //Lanza
         do {
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {
@@ -599,6 +755,31 @@ public class StartGaming {
                 }
             }
         } while (LanzaCheked < LanzaEnPartida);
+        //Nuez
+        do {
+            for (int i = 0; i < filas; i++) {
+                for (int j = 0; j < columnas; j++) {
+                    e = tablero[i][j].getContenido();
+                    if (e instanceof Nuez) {
+                        e.Accion();
+                        NuezCheked++;
+                    }
+                }
+            }
+        } while (NuezCheked < NuezEnPartida);
+        //Peta
+        do {
+            for (int i = 0; i < filas; i++) {
+                for (int j = 0; j < columnas; j++) {
+                    e = tablero[i][j].getContenido();
+                    if (e instanceof PetaCereza) {
+                        e.Accion();
+                        PetaCheked++;
+                    }
+                }
+            }
+        } while (PetaCheked < PetaEnPartida);
+        //Zombies
         do {
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {
@@ -611,7 +792,9 @@ public class StartGaming {
             }
         } while (ZombiesCheked < ZombiesEnPartida);
         //Limpieza
-        for (int i = 0; i < filas; i++) {
+        for (int i = 0;
+                i < filas;
+                i++) {
             for (int j = 0; j < columnas; j++) {
                 e = tablero[i][j].getContenido();
                 if (e.resistencia <= 0) {
@@ -625,6 +808,7 @@ public class StartGaming {
 
     /**
      * Indica si hay zombies en el tablero.
+     *
      * @return ZombiesTablero
      */
     private static boolean Zombies() {

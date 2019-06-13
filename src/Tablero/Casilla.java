@@ -24,8 +24,8 @@ public class Casilla {
     this.ocupado = false;
     }
 
-    public Casilla(Entidad zombie) {
-    this.contenido = zombie;
+    public Casilla(Entidad e) {
+    this.contenido = e;
     this.ocupado = true;
     }
     
